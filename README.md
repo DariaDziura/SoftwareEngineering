@@ -133,5 +133,10 @@ Tasks, user stories, and sprint progress are tracked using a GitHub Kanban board
 
 LICENSE
 -------
+This project is licensed under the Apache License 2.0.
+
+The Apache 2.0 License allows the software to be used, modified, and distributed, provided
+that proper credit is given and the licence terms are followed.
+
 This project is developed for educational purposes only and forms part of the
 University of Roehampton London Software Engineering module assessment.
