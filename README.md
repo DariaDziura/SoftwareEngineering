@@ -73,7 +73,7 @@ INSTALLATION AND SETUP
 
 1. Clone the repository:
 
-   git clone [Your-GitHub-Repo-Link]
+   git clone https://github.com/DariaDziura/SoftwareEngineering.git
 
 2. Configure environment variables:
 
