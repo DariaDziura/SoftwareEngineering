@@ -2,7 +2,7 @@ MediaSwap: The Community Book & Record Exchange
 ==============================================
 
 Programme:
-BSc Computer Science / BEng Software Engineering
+BSc Computer Science 
 
 Module:
 Software Engineering (CMP-N204-0)
@@ -11,8 +11,8 @@ Group:
 JUST GROUP
 
 Group Members:
-Katarzyna Lacek
-Daria Dziura
+Katarzyna Lacek,
+Daria Dziura,
 Emmanuel Boateng
 
 
