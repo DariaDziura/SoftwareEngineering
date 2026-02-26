@@ -1,0 +1,19 @@
+MediaSwap Project Description
+1. Project Vision & Problem Statement
+MediaSwap is a community-centric, full-stack web application designed to facilitate the cooperative exchange of physical media, specifically Books, Vinyl, CDs, and DVDs. In light of the ongoing cost-of-living crisis and the environmental impact of consumer waste, this platform provides a digital space for a "gift economy" where members can acquire new media through peer-to-peer swapping rather than financial transactions. By prioritizing sharing over ownership, MediaSwap aims to foster social cohesion and sustainable consumption within local communities.
+2. Proposed Technical Solution
+The application is a database-driven system built on a Full-Stack architecture (Node.js/Express with a MySQL backend). The system utilizes Object-Oriented Design (OOD) principles, implementing inheritance hierarchies for both users and media items to ensure code reliability and specialized data management.
+Key functionalities include:
+●	Member Actions: Users can create and manage listings, request swaps, and engage in real-time messaging with other members to coordinate exchanges.
+●	Community Trust: A peer-review and rating system allows members to build reputations, while a "Swap History" feature provides transparency for past transactions.
+●	Categorization: Items are strictly organized by media type and genre, allowing for efficient browsing and discovery.
+●	Administrative Oversight: A dedicated Admin role manages platform integrity by moderating content, resolving user reports, and configuring site categories.
+3. User Roles & Access Control
+To maintain system security and operational clarity, the platform implements Role-Based Access Control (RBAC):
+●	Members: Focus on the "Sharing" aspect—listing items, requesting swaps, and communicating with peers.
+●	Admins: Focus on "Building Community" through moderation—flagging inappropriate content, managing account security, and responding to member feedback or category requests.
+4. Ethics, Privacy, and Security
+In accordance with modern data protection standards, MediaSwap is designed with a "Privacy by Design" mindset. Sensitive personal information, such as email addresses, hashed passwords, and phone numbers, are treated as private attributes within the database schema. These details are only accessible to the account owner or authorized Administrators to prevent data misuse and ensure a safe environment for all community members.
+5. Expected Impact
+By providing a structured and reliable platform for exchange, MediaSwap transforms the way communities interact with physical media. It reduces the financial barrier to accessing culture and entertainment while extending the lifecycle of physical goods, directly supporting a more sustainable and connected society.
+
