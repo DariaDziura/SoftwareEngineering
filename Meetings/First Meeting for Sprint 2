@@ -1,0 +1,28 @@
+ 
+Date and Time 	Friday, 20th February 2026 at 20:30 PM
+Project Name 	 MediaSwap
+Meeting Goal 	Define user roles, system structure, and assign tasks for Sprint 2.
+Facilitator 	 Daria Dziura
+Note taker	Katarzyna Lacek
+Attendees 	Katarzyna Lacek, Daria Dziura, Emmanuel Boateng
+
+Roundtable Updates (each group member to contribute) 	
+
+•	Daria Dziura: Suggested that the platform needs an Admin role for moderation (deleting accounts/listings) and a Member role for swapping. She also suggested that the User should be a parent class for both
+•	Katarzyna Lacek: Suggested that our Code of Conduct needs to be updated. She proposed that members should have an option to suggest changes for the platform and that we need a clear hierarchy for items (Books, Records, etc.).
+•	Emmanuel Boateng: Suggested that members should be able to message each other, rate users after a swap, and report any inappropriate content. He also noted that Admins must be able to reset member passwords if they forget them.
+
+Discussion points 	
+
+•	Code of Conduct: We agreed to revise this to make sure the platform stays friendly and safe for swapping.
+•	Inheritance: We liked the parent/child class idea for the database because it makes the roles of Admin and Member very clear.
+•	Safety: We spent time talking about the reporting feature. We want members to be able to flag bad listings or "mean" comments immediately.
+•	Community Building: We decided that the rating system is the best way to build trust so people know who is a "good" swapper.
+
+Actions (list tasks and assign a group member) 	
+
+•	Katarzyna Lacek was assigned to refine the project idea, create the ERD, and create the class diagram.
+•	Emmanuel Boateng was assigned to write the user stories, create the wireframes, create the flow chart, and convert Sprint 1 files to markdown (.md).
+•	Daria Dziura was assigned to update the code of conduct, create the use case diagrams, create the sequence diagrams, create the activity diagrams, and convert Sprint 1 files to markdown (.md).
+ 
+ 
