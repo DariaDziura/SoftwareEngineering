@@ -1,66 +1,93 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Host: db
--- Generation Time: Oct 30, 2022 at 09:54 AM
--- Server version: 8.0.24
--- PHP Version: 7.4.20
+-- 1. Media Types (Book, DVD, CD, Vinyl)
+CREATE TABLE media_types (
+    type_id INT AUTO_INCREMENT PRIMARY KEY,
+    type_name VARCHAR(50) NOT NULL UNIQUE
+);
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- 2. Genres (Linked to specific types)
+CREATE TABLE genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    type_id INT,
+    genre_name VARCHAR(50) NOT NULL,
+    FOREIGN KEY (type_id) REFERENCES media_types(type_id) ON DELETE CASCADE
+);
 
+-- 3. Users (With private data handled via access control)
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    role ENUM('Admin', 'Member') DEFAULT 'Member',
+    phone_number VARCHAR(20),
+    city VARCHAR(100),
+    rating_score DECIMAL(3, 2) DEFAULT 5.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+-- 4. Media Items (Using ENUM for fixed condition list)
+CREATE TABLE media_items (
+    item_id INT AUTO_INCREMENT PRIMARY KEY,
+    owner_id INT,
+    type_id INT,
+    genre_id INT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    item_condition ENUM('New', 'Like New', 'Very Good', 'Good', 'Fair', 'Poor') NOT NULL,
+    photo_urls TEXT, -- Store as JSON or comma-separated strings
+    is_available BOOLEAN DEFAULT TRUE,
+    -- Specific attributes (can be NULL depending on type)
+    author_director VARCHAR(255), 
+    isbn_album_title VARCHAR(255),
+    FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (type_id) REFERENCES media_types(type_id),
+    FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
+);
 
---
--- Database: `softwareeng`
---
+-- 5. Swap Transactions (Tracking community exchange)
+CREATE TABLE swap_transactions (
+    swap_id INT AUTO_INCREMENT PRIMARY KEY,
+    requester_id INT,
+    owner_id INT,
+    item_id INT,
+    status ENUM('Pending', 'Accepted', 'Declined', 'Completed') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (requester_id) REFERENCES users(user_id),
+    FOREIGN KEY (owner_id) REFERENCES users(user_id),
+    FOREIGN KEY (item_id) REFERENCES media_items(item_id)
+);
 
--- --------------------------------------------------------
+-- 6. Messages (In-app communication)
+CREATE TABLE messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT,
+    receiver_id INT,
+    content TEXT NOT NULL,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id)
+);
 
---
--- Table structure for table `test_table`
---
+-- 7. Reviews (Peer-to-peer trust)
+CREATE TABLE reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    reviewer_id INT,
+    reviewee_id INT,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (reviewer_id) REFERENCES users(user_id),
+    FOREIGN KEY (reviewee_id) REFERENCES users(user_id)
+);
 
-CREATE TABLE `test_table` (
-  `id` int NOT NULL,
-  `name` varchar(512) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `test_table`
---
-
-INSERT INTO `test_table` (`id`, `name`) VALUES
-(1, 'Lisa'),
-(2, 'Kimia');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `test_table`
---
-ALTER TABLE `test_table`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `test_table`
---
-ALTER TABLE `test_table`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- 8. Admin Feedback (Direct line from Members)
+CREATE TABLE feedback (
+    feedback_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT,
+    subject VARCHAR(255),
+    message_body TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES users(user_id)
+);
