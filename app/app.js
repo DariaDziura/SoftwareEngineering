@@ -1,15 +1,23 @@
-// Import express.js
+/**
+ * MEDIASWAP - Main Application File
+ * Module: Software Engineering (CMP-N204-0)
+ * * This file handles the routing and server configuration for the 
+ * MediaSwap "gift economy" platform.
+ */
+
 const express = require("express");
 const path = require("path");
-// Create express app
-var app = express();
+const app = express();
 
-// Add static files location
+// 1. MIDDLEWARE & STATIC ASSETS
+// Serves CSS, client-side JS, and images from the 'static' folder
 app.use(express.static("static"));
 
-// Get the functions in the db.js file to use
+// 2. DATABASE & MODELS
+// Import the centralized database service
 const db = require('./services/db');
 
+// Initialize Models for Sprint 3 functionality
 const Item = require("./Models/Item");
 const itemModel = new Item(db);
 
@@ -19,108 +27,118 @@ const userModel = new User(db);
 const Category = require("./Models/Category");
 const categoryModel = new Category(db);
 
+// 3. VIEW ENGINE SETUP
+// Configures PUG as the templating engine
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
-// Create a route for root/ listings - /
-app.get("/", async function(req, res) {
-  try {
-    const listings = await itemModel.getAll();
-    console.log("Listings:", listings);
-    res.render("listings", { listings });
-  } catch (err) {
-    console.error("Route error:", err);
-    res.status(500).send(err.message);
-  }
+// --------------------------------------------------------
+// 4. ROUTES - LISTINGS & CATEGORIES
+// --------------------------------------------------------
+
+// Root Route: Redirects to the main listings page
+app.get("/", function(req, res) {
+    res.redirect("/listings");
 });
 
-//Create route for details
-app.get("/users/:id", async function(req, res) {
-  try {
-    const userId = req.params.id;
-    const user = await userModel.getById(userId);
-    const listings = await itemModel.getByUser(userId);
-
-    res.render("profile", { user, listings });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-});
-
-//route for users' list
-app.get("/users", async function(req, res) {
-  try {
-    const users = await userModel.getAll();
-    res.render("users", { users });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-});
-
-app.get("/users", async function(req, res) {
-  try {
-    const users = await userModel.getAll();
-    res.render("users", { users });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-});
-
-app.get("/categories", async function(req, res) {
-  try {
-    const categories = await categoryModel.getAll();
-    res.render("categories", { categories });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-});
-
+// Listings Page: Displays all books and records or filters by category
+// Requirement: "Listing page"
 app.get("/listings", async function(req, res) {
-  try {
-    const categoryId = req.query.category;
-    const listings = categoryId
-      ? await itemModel.getByCategory(categoryId)
-      : await itemModel.getAll();
+    try {
+        const categoryId = req.query.category;
+        const listings = categoryId
+            ? await itemModel.getByCategory(categoryId)
+            : await itemModel.getAll();
 
-    res.render("listings", { listings });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
+        res.render("listings", { listings });
+    } catch (err) {
+        console.error("Error fetching listings:", err);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
-// Create a route for testing the db
-app.get("/db_test", function(req, res) {
-    // Assumes a table called test_table exists in your database
-    sql = 'select * from test_table';
-    db.query(sql).then(results => {
-        console.log(results);
-        res.send(results)
-    });
+// Item Detail Page: Shows specific info for a book or record
+// Requirement: "Detail page"
+app.get("/listings/:id", async function(req, res) {
+    try {
+        const itemId = req.params.id;
+        const item = await itemModel.getById(itemId);
+        if (!item) return res.status(404).send("Item not found");
+
+        res.render("item_detail", { item });
+    } catch (err) {
+        console.error("Error fetching item details:", err);
+        res.status(500).send("Error loading item details");
+    }
 });
 
-// Create a route for /goodbye
-// Responds to a 'GET' request
+// Category List: Shows all available genres for filtering
+app.get("/categories", async function(req, res) {
+    try {
+        const categories = await categoryModel.getAll();
+        res.render("categories", { categories });
+    } catch (err) {
+        console.error("Error fetching categories:", err);
+        res.status(500).send("Error loading categories");
+    }
+});
+
+// --------------------------------------------------------
+// 5. ROUTES - USERS & PROFILES
+// --------------------------------------------------------
+
+// Users List: Displays all community members
+// Requirement: "Users list page"
+app.get("/users", async function(req, res) {
+    try {
+        const users = await userModel.getAll();
+        res.render("users", { users });
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).send("Error loading users");
+    }
+});
+
+// User Profile: Displays user info and their specific listings
+// Requirement: "User profile page"
+app.get("/users/:id", async function(req, res) {
+    try {
+        const userId = req.params.id;
+        const user = await userModel.getById(userId);
+        const listings = await itemModel.getByUser(userId);
+
+        if (!user) return res.status(404).send("User not found");
+        res.render("profile", { user, listings });
+    } catch (err) {
+        console.error("Error fetching profile:", err);
+        res.status(500).send("Error loading profile");
+    }
+});
+
+// --------------------------------------------------------
+// 6. UTILITY & TEST ROUTES
+// --------------------------------------------------------
+
+// Database Connection Test
+// Verifies connection to the 'softwareeng' database
+app.get("/db_test", async function(req, res) {
+    try {
+        // Updated from 'test_table' to 'users' to match current schema
+        const sql = 'SELECT username, email FROM users LIMIT 5';
+        const results = await db.query(sql);
+        res.json(results);
+    } catch (err) {
+        res.status(500).send("Database connection failed: " + err.message);
+    }
+});
+
 app.get("/goodbye", function(req, res) {
-    res.send("Goodbye world!");
+    res.send("Goodbye from MediaSwap!");
 });
 
-// Create a dynamic route for /hello/<name>, where name is any value provided by user
-// At the end of the URL
-// Responds to a 'GET' request
-app.get("/hello/:name", function(req, res) {
-    // req.params contains any parameters in the request
-    // We can examine it in the console for debugging purposes
-    console.log(req.params);
-    //  Retrieve the 'name' parameter and use it in a dynamically generated page
-    res.send("Hello " + req.params.name);
-});
-
-// Start server on port 3000
-app.listen(3000,function(){
-    console.log(`Server running at http://127.0.0.1:3000/`);
+// --------------------------------------------------------
+// 7. SERVER START
+// --------------------------------------------------------
+app.listen(3000, function() {
+    console.log(`MediaSwap running at http://localhost:3000/`);
 });
