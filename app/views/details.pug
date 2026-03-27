@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= item.title
+
+  p Description: #{item.description}
+  p Category: #{item.category}
+  p Condition: #{item.item_condition}
+
+  p Owner:
+    a(href=`/users/${item.user_id}`)= item.username

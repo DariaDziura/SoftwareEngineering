@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1 All Listings
+
+  ul
+    each item in (listings || [])
+      li
+        a(href=`/details/${item.id}`)= item.title
+        | - #{item.category}

@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= user.username
+
+  p Email: #{user.email}
+
+  h2 Listings
+
+  ul
+    each item in listings
+      li= item.title
