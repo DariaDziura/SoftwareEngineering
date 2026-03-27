@@ -1,12 +1,30 @@
 extends layout
 
 block content
-  h1= user.username
+  h1 #{user.username}'s Profile
+  
+  .item-card(style="max-width: 400px;")
+    p 
+      strong Name: 
+      | #{user.firstName} #{user.lastName}
+    p 
+      strong Location: 
+      | #{user.city}
+    p 
+      strong Email: 
+      | #{user.email}
+    if user.rating
+      p 
+        strong Rating: 
+        | #{user.rating}/5
 
-  p Email: #{user.email}
-
-  h2 Listings
-
-  ul
-    each item in listings
-      li= item.title
+  h2 Items listed by #{user.firstName}
+  if listings.length > 0
+    .grid-container
+      each item in listings
+        .item-card
+          h3 #{item.title}
+          p Condition: #{item.item_condition}
+          a.btn(href=`/details/${item.id}`) View Details
+  else
+    p This member has no active listings.

@@ -1,144 +1,101 @@
-/**
- * MEDIASWAP - Main Application File
- * Module: Software Engineering (CMP-N204-0)
- * * This file handles the routing and server configuration for the 
- * MediaSwap "gift economy" platform.
- */
-
 const express = require("express");
-const path = require("path");
 const app = express();
+const path = require("path");
 
-// 1. MIDDLEWARE & STATIC ASSETS
-// Serves CSS, client-side JS, and images from the 'static' folder
-app.use(express.static("static"));
+// 1. Setup Database Connection 
+// (We go up one level to services/db because we are already in the app folder)
+const db = require("./services/db"); 
 
-// 2. DATABASE & MODELS
-// Import the centralized database service
-const db = require('./services/db');
-
-// Initialize Models for Sprint 3 functionality
-const Item = require("./Models/Item");
-const itemModel = new Item(db);
-
+// 2. Import Models
 const User = require("./Models/User");
-const userModel = new User(db);
-
+const Item = require("./Models/Item");
 const Category = require("./Models/Category");
+
+// Initialize Model Instances
+const userModel = new User(db);
+const itemModel = new Item(db);
 const categoryModel = new Category(db);
 
-// 3. VIEW ENGINE SETUP
-// Configures PUG as the templating engine
+// 3. Setup View Engine (Pug)
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
-// --------------------------------------------------------
-// 4. ROUTES - LISTINGS & CATEGORIES
-// --------------------------------------------------------
+// Serve static files (CSS, Images)
+app.use(express.static("static"));
 
-// Root Route: Redirects to the main listings page
+// --- ROUTES ---
+
+// Home Page
 app.get("/", function(req, res) {
-    res.redirect("/listings");
+    res.render("index", { title: "Home" });
 });
 
-// Listings Page: Displays all books and records or filters by category
-// Requirement: "Listing page"
+// All Listings Page
 app.get("/listings", async function(req, res) {
     try {
-        const categoryId = req.query.category;
-        const listings = categoryId
-            ? await itemModel.getByCategory(categoryId)
-            : await itemModel.getAll();
-
-        res.render("listings", { listings });
+        const listings = await itemModel.getAll();
+        res.render("listings", { title: "All Listings", listings });
     } catch (err) {
-        console.error("Error fetching listings:", err);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send("Error fetching listings: " + err.message);
     }
 });
 
-// Item Detail Page: Shows specific info for a book or record
-// Requirement: "Detail page"
-app.get("/listings/:id", async function(req, res) {
+// Item Details Page
+app.get("/details/:id", async function(req, res) {
     try {
-        const itemId = req.params.id;
-        const item = await itemModel.getById(itemId);
+        const item = await itemModel.getById(req.params.id);
         if (!item) return res.status(404).send("Item not found");
-
-        res.render("item_detail", { item });
+        res.render("details", { title: item.title, item });
     } catch (err) {
-        console.error("Error fetching item details:", err);
-        res.status(500).send("Error loading item details");
+        res.status(500).send(err.message);
     }
 });
 
-// Category List: Shows all available genres for filtering
+// Categories Page
 app.get("/categories", async function(req, res) {
     try {
         const categories = await categoryModel.getAll();
-        res.render("categories", { categories });
+        res.render("categories", { title: "Categories", categories });
     } catch (err) {
-        console.error("Error fetching categories:", err);
-        res.status(500).send("Error loading categories");
+        res.status(500).send(err.message);
     }
 });
 
-// --------------------------------------------------------
-// 5. ROUTES - USERS & PROFILES
-// --------------------------------------------------------
-
-// Users List: Displays all community members
-// Requirement: "Users list page"
+// Community / Users Page
 app.get("/users", async function(req, res) {
     try {
         const users = await userModel.getAll();
-        res.render("users", { users });
+        res.render("users", { title: "Community", users });
     } catch (err) {
-        console.error("Error fetching users:", err);
-        res.status(500).send("Error loading users");
+        res.status(500).send(err.message);
     }
 });
 
-// User Profile: Displays user info and their specific listings
-// Requirement: "User profile page"
+// Individual User Profile
 app.get("/users/:id", async function(req, res) {
     try {
-        const userId = req.params.id;
-        const user = await userModel.getById(userId);
-        const listings = await itemModel.getByUser(userId);
-
+        const user = await userModel.getById(req.params.id);
         if (!user) return res.status(404).send("User not found");
-        res.render("profile", { user, listings });
+        const listings = await itemModel.getByUser(req.params.id);
+        res.render("profile", { title: user.username, user, listings });
     } catch (err) {
-        console.error("Error fetching profile:", err);
-        res.status(500).send("Error loading profile");
+        res.status(500).send(err.message);
     }
 });
 
-// --------------------------------------------------------
-// 6. UTILITY & TEST ROUTES
-// --------------------------------------------------------
-
-// Database Connection Test
-// Verifies connection to the 'softwareeng' database
+// --- DATABASE TEST ROUTE ---
+// Use this to verify your SQL script loaded John Villa correctly
 app.get("/db_test", async function(req, res) {
     try {
-        // Updated from 'test_table' to 'users' to match current schema
-        const sql = 'SELECT username, email FROM users LIMIT 5';
-        const results = await db.query(sql);
-        res.json(results);
+        const rows = await db.query("SELECT * FROM users");
+        res.json(rows);
     } catch (err) {
         res.status(500).send("Database connection failed: " + err.message);
     }
 });
 
-app.get("/goodbye", function(req, res) {
-    res.send("Goodbye from MediaSwap!");
-});
-
-// --------------------------------------------------------
-// 7. SERVER START
-// --------------------------------------------------------
-app.listen(3000, function() {
-    console.log(`MediaSwap running at http://localhost:3000/`);
+// Start Server
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`MediaSwap running at http://localhost:${PORT}`);
 });

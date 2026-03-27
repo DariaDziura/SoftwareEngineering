@@ -12,8 +12,8 @@ USE softwareeng;
 -- --------------------------------------------------------
 -- 1. MEDIA TYPES
 -- --------------------------------------------------------
--- Defines high-level categories. Updated to focus on 'Book' 
--- and 'Record' per project theme.
+-- Defines high-level categories (Books and Records) as per 
+-- the project description.
 CREATE TABLE IF NOT EXISTS media_types (
     type_id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(50) NOT NULL UNIQUE
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS media_types (
 -- --------------------------------------------------------
 -- 2. GENRES
 -- --------------------------------------------------------
--- Linked to types to allow organized browsing.
+-- Linked to types to allow organized browsing and discovery.
 CREATE TABLE IF NOT EXISTS genres (
     genre_id INT AUTO_INCREMENT PRIMARY KEY,
     type_id INT,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS genres (
 -- 3. USERS
 -- --------------------------------------------------------
 -- Stores profile data. Data minimization applied (no full addresses) 
--- to protect privacy.
+-- to protect privacy per Ethical Issues document.
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- 4. MEDIA ITEMS
 -- --------------------------------------------------------
 -- Core inventory. Condition ENUM addresses user concerns 
--- regarding item quality.
+-- regarding item quality (especially important for vinyl).
 CREATE TABLE IF NOT EXISTS media_items (
     item_id INT AUTO_INCREMENT PRIMARY KEY,
     owner_id INT,
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS media_items (
     item_condition ENUM('New', 'Like New', 'Very Good', 'Good', 'Fair', 'Poor') NOT NULL,
     photo_urls TEXT, 
     is_available BOOLEAN DEFAULT TRUE,
-    author_director VARCHAR(255), 
-    isbn_album_title VARCHAR(255), -- Stores ISBN for books or Catalog No. for records
+    author_artist VARCHAR(255), 
+    isbn_album_title VARCHAR(255), -- ISBN for books or Catalog No. for records
     FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (type_id) REFERENCES media_types(type_id),
     FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS media_items (
 -- --------------------------------------------------------
 -- 5. SWAP TRANSACTIONS
 -- --------------------------------------------------------
--- Manages the non-monetary exchange workflow.
+-- Manages the non-monetary exchange workflow between members.
 CREATE TABLE IF NOT EXISTS swap_transactions (
     swap_id INT AUTO_INCREMENT PRIMARY KEY,
     requester_id INT,
@@ -90,8 +90,7 @@ CREATE TABLE IF NOT EXISTS swap_transactions (
 -- --------------------------------------------------------
 -- 6. MESSAGES
 -- --------------------------------------------------------
--- Sprint 4 Requirement: In-app communication for coordinating 
--- safe physical meetups.
+-- In-app communication for coordinating safe physical meetups.
 CREATE TABLE IF NOT EXISTS messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT,
@@ -105,8 +104,7 @@ CREATE TABLE IF NOT EXISTS messages (
 -- --------------------------------------------------------
 -- 7. REVIEWS
 -- --------------------------------------------------------
--- Trust mechanism to allow users to rate their swapping 
--- experience.
+-- Trust mechanism to allow users to rate their swapping experience.
 CREATE TABLE IF NOT EXISTS reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     reviewer_id INT,
@@ -119,20 +117,7 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- --------------------------------------------------------
--- 8. FEEDBACK
--- --------------------------------------------------------
--- Allows members to send direct inquiries to Admins.
-CREATE TABLE IF NOT EXISTS feedback (
-    feedback_id INT AUTO_INCREMENT PRIMARY KEY,
-    member_id INT,
-    subject VARCHAR(255),
-    message_body TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES users(user_id)
-);
-
--- --------------------------------------------------------
--- SEED DATA (FOR TESTING & PERSONAS)
+-- SEED DATA (ALIGNED WITH PROJECT PERSONAS)
 -- --------------------------------------------------------
 
 -- Initialize Media Types
@@ -143,17 +128,16 @@ INSERT INTO genres (type_id, genre_name) VALUES
 (1, 'Philosophy'), (1, 'Science Fiction'), 
 (2, 'Rock'), (2, 'Jazz');
 
--- Seed Users (Representing Project Personas)
+-- Seed Users (Representing John Villa and Reggie Diesel)
 INSERT INTO users (username, email, password_hash, first_name, last_name, phone_number, city)
 VALUES
-('john_doe', 'john@example.com', 'hash123', 'John', 'Doe', '1234567890', 'London'), -- Persona 1
-('alice_smith', 'alice@example.com', 'hash123', 'Alice', 'Smith', '0987654321', 'Manchester'),
-('bob_jones', 'bob@example.com', 'hash123', 'Bob', 'Jones', NULL, 'Birmingham');
+('jvilla', 'john.v@example.com', 'hash123', 'John', 'Villa', '1234567890', 'Oldham'),
+('rdiesel', 'reggie.d@example.com', 'hash123', 'Reggie', 'Diesel', '0987654321', 'Manchester');
 
 -- Seed Initial Inventory
-INSERT INTO media_items (owner_id, type_id, genre_id, title, description, item_condition, is_available, author_director, isbn_album_title)
+INSERT INTO media_items (owner_id, type_id, genre_id, title, author_artist, item_condition, is_available, isbn_album_title)
 VALUES
-(1, 1, 1, 'The Hobbit', 'A fantasy adventure book', 'Good', 1, 'J.R.R. Tolkien', '978-0261103344'),
-(2, 1, 2, 'Dune', 'Sci-fi epic novel', 'Very Good', 1, 'Frank Herbert', '978-0441013593'),
-(1, 2, 3, 'Rumours', 'Classic rock vinyl', 'Good', 1, 'Fleetwood Mac', 'BS-2977'), -- Persona 2 preference
-(1, 2, 4, 'Kind of Blue', 'Jazz masterpiece', 'Like New', 1, 'Miles Davis', 'CL-1355');
+(1, 1, 1, 'Beyond Good and Evil', 'Friedrich Nietzsche', 'Good', 1, '978-0140441611'),
+(1, 1, 2, 'Dune', 'Frank Herbert', 'Very Good', 1, '978-0441013593'),
+(2, 2, 3, 'Rumours', 'Fleetwood Mac', 'Like New', 1, 'BS-2977'),
+(2, 2, 4, 'Kind of Blue', 'Miles Davis', 'Good', 1, 'CL-1355');
