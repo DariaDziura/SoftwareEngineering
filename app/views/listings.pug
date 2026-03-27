@@ -4,7 +4,7 @@ block content
   h1 All Listings
 
   ul
-    each item in listings
+    each item in (listings || [])
       li
-        a(href=`/listings/${item.id}`)= item.title
-        |  - #{item.genre_name}
+        a(href=`/details/${item.id}`)= item.title
+        | - #{item.category}

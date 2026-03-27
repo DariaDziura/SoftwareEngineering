@@ -4,11 +4,11 @@ class Item {
     }
 
     async getById(id) {
-        const [rows] = await this.db.query(`
+        const rows = await this.db.query(`
             SELECT
                 mi.item_id AS id,
                 mi.title,
-                mi.decription,
+                mi.description,
                 mi.item_condition,
                 mi.owner_id AS user_id,
                 u.username,
@@ -23,7 +23,7 @@ class Item {
     }
 
     async getAll() {
-        const [rows] = await this.db.query(`
+        const rows = await this.db.query(`
             SELECT
                 mi.item_id AS id,
                 mi.title,
@@ -34,6 +34,32 @@ class Item {
         
         return rows;
     }
+
+    async getByUser(userId) {
+    const rows = await this.db.query(`
+        SELECT
+            item_id AS id,
+            title
+        FROM media_items
+        WHERE owner_id = ?
+    `, [userId]);
+
+    return rows;
+    }
+    
+    async getByCategory(categoryId) {
+    const rows = await this.db.query(`
+        SELECT
+            mi.item_id AS id,
+            mi.title,
+            g.genre_name AS category
+        FROM media_items mi
+        LEFT JOIN genres g ON mi.genre_id = g.genre_id
+        WHERE mi.genre_id = ?
+    `, [categoryId]);
+
+    return rows;
+}
 
     }
 

@@ -91,3 +91,39 @@ CREATE TABLE feedback (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES users(user_id)
 );
+
+INSERT INTO users (username, email, password_hash, first_name, last_name, phone_number, city)
+VALUES
+('john_doe', 'john@example.com', 'hash123', 'John', 'Doe', '1234567890', 'London'),
+('alice_smith', 'alice@example.com', 'hash123', 'Alice', 'Smith', '0987654321', 'Manchester'),
+('bob_jones', 'bob@example.com', 'hash123', 'Bob', 'Jones', NULL, 'Birmingham');
+
+INSERT INTO media_types (type_name)
+VALUES
+('Book'),
+('DVD');
+
+INSERT INTO genres (type_id, genre_name)
+VALUES
+(1, 'Fantasy'),
+(1, 'Science Fiction'),
+(2, 'Action'),
+(2, 'Drama');
+
+INSERT INTO media_items (
+  owner_id,
+  type_id,
+  genre_id,
+  title,
+  description,
+  item_condition,
+  photo_urls,
+  is_available,
+  author_director,
+  isbn_album_title
+)
+VALUES
+(1, 1, 1, 'The Hobbit', 'A fantasy adventure book', 'Good', NULL, 1, 'J.R.R. Tolkien', '978-0261103344'),
+(2, 1, 2, 'Dune', 'Sci-fi epic novel', 'Very Good', NULL, 1, 'Frank Herbert', '978-0441013593'),
+(3, 2, 3, 'Mad Max: Fury Road', 'Post-apocalyptic action film', 'Good', NULL, 1, 'George Miller', NULL),
+(1, 2, 4, 'The Shawshank Redemption', 'Drama film about hope and friendship', 'Like New', NULL, 1, 'Frank Darabont', NULL);

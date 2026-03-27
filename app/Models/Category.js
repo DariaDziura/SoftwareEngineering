@@ -4,7 +4,7 @@ class Category {
     }
 
     async getAll() {
-        const [rows] = await this.db.query(`
+        const rows = await this.db.query(`
             SELECT
                 genre_id AS id,
                 genre_name AS name

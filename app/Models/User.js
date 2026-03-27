@@ -1,12 +1,10 @@
-const { useSyncExternalStore } = require("react");
-
 class User {
     constructor(db) {
         this.db = db;
     }
 
     async getById(id) {
-        const [rows] = await this.db.query(`
+        const rows = await this.db.query(`
             SELECT
                 user_id AS id,
                 username,
@@ -15,11 +13,11 @@ class User {
                 WHERE user_id = ?
             `, [id]);
                     
-        return rows[0]    
+        return rows[0];   
     }
 
     async getAll() {
-        const [rows] = await this.db.query(`
+        const rows = await this.db.query(`
             SELECT
                 user_id AS id,
                 username,
@@ -31,3 +29,5 @@ class User {
     return rows;
 }
 }
+
+module.exports = User;
