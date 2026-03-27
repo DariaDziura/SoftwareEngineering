@@ -1,27 +1,21 @@
-/**
- * Category Model
- * Handles database operations for Genres/Categories.
- */
 class Category {
     constructor(db) {
         this.db = db;
     }
 
+    // Fetches all categories for the sidebar/list
     async getAll() {
-        // Updated query to JOIN with media_types so the user knows 
-        // if the genre belongs to a 'Book' or a 'Record'.
-        const rows = await this.db.query(`
-            SELECT 
-                g.genre_id AS id, 
-                g.genre_name AS name,
-                t.type_name AS type
-            FROM genres g
-            JOIN media_types t ON g.type_id = t.type_id
-            ORDER BY t.type_name, g.genre_name
-        `);
-        
-        return rows;
+        const sql = "SELECT genre_id AS id, genre_name AS name FROM genres";
+        return await this.db.query(sql);
     }
+
+    // Fetches a single category by ID
+    async getById(id) {
+    // FIX: Removed the word "ALL" from the start of the string
+    const sql = "SELECT genre_id AS id, genre_name AS name FROM genres WHERE genre_id = ?";
+    const rows = await this.db.query(sql, [id]);
+    return rows[0];
+}
 }
 
 module.exports = Category;

@@ -1,41 +1,31 @@
 -- ============================================================
 -- MEDIASWAP DATABASE INITIALIZATION SCRIPT
--- Module: Software Engineering (CMP-N204-0)
--- Description: Full-stack 'gift economy' platform for swapping 
--- books and records.
 -- ============================================================
 
--- Target Database
+SET FOREIGN_KEY_CHECKS = 0;
 CREATE DATABASE IF NOT EXISTS softwareeng;
 USE softwareeng;
 
--- --------------------------------------------------------
+-- Clear existing data to allow clean re-seeding
+DROP TABLE IF EXISTS reviews, messages, swap_transactions, media_items, users, genres, media_types;
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- 1. MEDIA TYPES
--- --------------------------------------------------------
--- Defines high-level categories (Books and Records) as per 
--- the project description.
-CREATE TABLE IF NOT EXISTS media_types (
+CREATE TABLE media_types (
     type_id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- --------------------------------------------------------
 -- 2. GENRES
--- --------------------------------------------------------
--- Linked to types to allow organized browsing and discovery.
-CREATE TABLE IF NOT EXISTS genres (
+CREATE TABLE genres (
     genre_id INT AUTO_INCREMENT PRIMARY KEY,
     type_id INT,
     genre_name VARCHAR(50) NOT NULL,
     FOREIGN KEY (type_id) REFERENCES media_types(type_id) ON DELETE CASCADE
 );
 
--- --------------------------------------------------------
 -- 3. USERS
--- --------------------------------------------------------
--- Stores profile data. Data minimization applied (no full addresses) 
--- to protect privacy per Ethical Issues document.
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -44,17 +34,14 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(50) NOT NULL,
     role ENUM('Admin', 'Member') DEFAULT 'Member',
     phone_number VARCHAR(20),
-    city VARCHAR(100), -- Facilitates local community swaps
-    rating_score DECIMAL(3, 2) DEFAULT 5.00, -- Trust & Safety feature
+    city VARCHAR(100),
+    rating_score DECIMAL(3, 2) DEFAULT 5.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- --------------------------------------------------------
 -- 4. MEDIA ITEMS
--- --------------------------------------------------------
--- Core inventory. Condition ENUM addresses user concerns 
--- regarding item quality (especially important for vinyl).
-CREATE TABLE IF NOT EXISTS media_items (
+-- Updated: is_available is now an ENUM and NOT NULL
+CREATE TABLE media_items (
     item_id INT AUTO_INCREMENT PRIMARY KEY,
     owner_id INT,
     type_id INT,
@@ -63,19 +50,16 @@ CREATE TABLE IF NOT EXISTS media_items (
     description TEXT,
     item_condition ENUM('New', 'Like New', 'Very Good', 'Good', 'Fair', 'Poor') NOT NULL,
     photo_urls TEXT, 
-    is_available BOOLEAN DEFAULT TRUE,
+    is_available ENUM('Available', 'Swapped') NOT NULL DEFAULT 'Available',
     author_artist VARCHAR(255), 
-    isbn_album_title VARCHAR(255), -- ISBN for books or Catalog No. for records
+    isbn_album_title VARCHAR(255),
     FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (type_id) REFERENCES media_types(type_id),
     FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
 );
 
--- --------------------------------------------------------
 -- 5. SWAP TRANSACTIONS
--- --------------------------------------------------------
--- Manages the non-monetary exchange workflow between members.
-CREATE TABLE IF NOT EXISTS swap_transactions (
+CREATE TABLE swap_transactions (
     swap_id INT AUTO_INCREMENT PRIMARY KEY,
     requester_id INT,
     owner_id INT,
@@ -87,11 +71,8 @@ CREATE TABLE IF NOT EXISTS swap_transactions (
     FOREIGN KEY (item_id) REFERENCES media_items(item_id)
 );
 
--- --------------------------------------------------------
 -- 6. MESSAGES
--- --------------------------------------------------------
--- In-app communication for coordinating safe physical meetups.
-CREATE TABLE IF NOT EXISTS messages (
+CREATE TABLE messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT,
     receiver_id INT,
@@ -101,11 +82,8 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (receiver_id) REFERENCES users(user_id)
 );
 
--- --------------------------------------------------------
 -- 7. REVIEWS
--- --------------------------------------------------------
--- Trust mechanism to allow users to rate their swapping experience.
-CREATE TABLE IF NOT EXISTS reviews (
+CREATE TABLE reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     reviewer_id INT,
     reviewee_id INT,
@@ -117,27 +95,33 @@ CREATE TABLE IF NOT EXISTS reviews (
 );
 
 -- --------------------------------------------------------
--- SEED DATA (ALIGNED WITH PROJECT PERSONAS)
+-- SEED DATA
 -- --------------------------------------------------------
 
 -- Initialize Media Types
-INSERT INTO media_types (type_name) VALUES ('Book'), ('Record');
+INSERT INTO media_types (type_id, type_name) VALUES (1, 'Book'), (2, 'Record');
 
 -- Initialize Genres
-INSERT INTO genres (type_id, genre_name) VALUES 
-(1, 'Philosophy'), (1, 'Science Fiction'), 
-(2, 'Rock'), (2, 'Jazz');
+INSERT INTO genres (genre_id, type_id, genre_name) VALUES 
+(1, 1, 'Philosophy'), (2, 1, 'Science Fiction'), (3, 1, 'Non-Fiction'), (4, 1, 'Classic Literature'),
+(5, 2, 'Rock'), (6, 2, 'Jazz'), (7, 2, 'Electronic'), (8, 2, 'Blues');
 
--- Seed Users (Representing John Villa and Reggie Diesel)
-INSERT INTO users (username, email, password_hash, first_name, last_name, phone_number, city)
+-- Seed Users
+INSERT INTO users (user_id, username, email, password_hash, first_name, last_name, phone_number, city)
 VALUES
-('jvilla', 'john.v@example.com', 'hash123', 'John', 'Villa', '1234567890', 'Oldham'),
-('rdiesel', 'reggie.d@example.com', 'hash123', 'Reggie', 'Diesel', '0987654321', 'Manchester');
+(1, 'jvilla', 'john.v@example.com', 'hash123', 'John', 'Villa', '1234567890', 'Oldham'),
+(2, 'rdiesel', 'reggie.d@example.com', 'hash123', 'Reggie', 'Diesel', '0987654321', 'Manchester'),
+(3, 'sarah_reads', 'sarah.s@example.com', 'hash123', 'Sarah', 'Smith', '0771234567', 'Salford'),
+(4, 'vinyl_vibe', 'mike.m@example.com', 'hash123', 'Mike', 'Jones', '0788888888', 'Stockport');
 
--- Seed Initial Inventory
-INSERT INTO media_items (owner_id, type_id, genre_id, title, author_artist, item_condition, is_available, isbn_album_title)
+-- Seed Initial Inventory (Updated with ENUM 'Available')
+INSERT INTO media_items (owner_id, type_id, genre_id, title, author_artist, item_condition, is_available, isbn_album_title, description)
 VALUES
-(1, 1, 1, 'Beyond Good and Evil', 'Friedrich Nietzsche', 'Good', 1, '978-0140441611'),
-(1, 1, 2, 'Dune', 'Frank Herbert', 'Very Good', 1, '978-0441013593'),
-(2, 2, 3, 'Rumours', 'Fleetwood Mac', 'Like New', 1, 'BS-2977'),
-(2, 2, 4, 'Kind of Blue', 'Miles Davis', 'Good', 1, 'CL-1355');
+(1, 1, 1, 'Beyond Good and Evil', 'Friedrich Nietzsche', 'Good', 'Available', '978-0140441611', 'Classic philosophy text.'),
+(1, 1, 2, 'Dune', 'Frank Herbert', 'Very Good', 'Available', '978-0441013593', 'First book in the Dune saga.'),
+(2, 2, 5, 'Rumours', 'Fleetwood Mac', 'Like New', 'Available', '1977 Warner Bros. Original Pressing', 'Perfect condition.'),
+(2, 2, 6, 'Kind of Blue', 'Miles Davis', 'Good', 'Available', 'Columbia Records 180g Reissue', 'Great jazz staple.'),
+(3, 1, 3, 'Sapiens', 'Yuval Noah Harari', 'New', 'Available', '978-0062316097', 'A brief history of humankind.'),
+(3, 1, 4, '1984', 'George Orwell', 'Fair', 'Available', '978-0451524935', 'Vintage paperback.'),
+(4, 2, 7, 'Discovery', 'Daft Punk', 'Like New', 'Available', '2021 Gatefold Vinyl Reissue', 'Electronic classic.'),
+(4, 2, 8, 'At Newport', 'Muddy Waters', 'Very Good', 'Available', '1960 Chess Records Mono Pressing', 'Classic blues.');

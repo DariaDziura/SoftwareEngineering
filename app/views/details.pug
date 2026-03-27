@@ -1,11 +1,54 @@
 extends layout
 
 block content
-  h1= item.title
+  .container
+    h1= item.title
+    
+    .item-card
+      //- Basic Information
+      p 
+        strong Author/Artist: 
+        | #{item.author_artist}
+      
+      p 
+        strong Media Type: 
+        | #{item.media_type}
 
-  p Description: #{item.description}
-  p Category: #{item.category}
-  p Condition: #{item.item_condition}
+      //- Conditional Logic to show the right label for the shared column
+      if item.media_type === 'Book'
+        p 
+          strong ISBN: 
+          | #{item.isbn_album_title}
+      else if item.media_type === 'Record'
+        p 
+          strong Edition: 
+          | #{item.isbn_album_title}
+      else
+        p 
+          strong Identifier: 
+          | #{item.isbn_album_title}
 
-  p Owner:
-    a(href=`/users/${item.user_id}`)= item.username
+      p 
+        strong Category: 
+        | #{item.category}
+      
+      p 
+        strong Condition: 
+        | #{item.item_condition}
+
+      hr
+
+      //- Detailed Description
+      h3 Description
+      p= item.description
+
+      hr
+
+      //- Owner Information
+      .owner-info
+        p 
+          strong Listed by: 
+          a(href=`/users/${item.user_id}`) #{item.username}
+    
+    .actions
+      a.btn(href="/listings") ← Back to All Listings

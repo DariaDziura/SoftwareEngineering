@@ -20,10 +20,8 @@ services:
       - "3308:3306"
     volumes:
       - ./db:/var/lib/mysql
-      # ADD THIS LINE BELOW:
+      # ADD THIS LINE: This maps your file into the auto-run folder
       - ./sd2-db.sql:/docker-entrypoint-initdb.d/init.sql
-    # This ensures the SQL script runs only on the very first startup
-
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     restart: always

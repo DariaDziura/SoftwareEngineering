@@ -3,7 +3,6 @@ const app = express();
 const path = require("path");
 
 // 1. Setup Database Connection 
-// (We go up one level to services/db because we are already in the app folder)
 const db = require("./services/db"); 
 
 // 2. Import Models
@@ -40,6 +39,27 @@ app.get("/listings", async function(req, res) {
     }
 });
 
+// Filtered Category Page - FIX: This route handles the category filtering
+app.get("/category/:id", async function(req, res) {
+    try {
+        const categoryId = req.params.id;
+        
+        // Fetch the category name for the page title
+        const category = await categoryModel.getById(categoryId);
+        if (!category) return res.status(404).send("Category not found");
+
+        // Fetch only items belonging to this specific category
+        const listings = await itemModel.getByCategory(categoryId);
+
+        res.render("listings", { 
+            title: `Category: ${category.category_name}`, 
+            listings 
+        });
+    } catch (err) {
+        res.status(500).send("Error filtering category: " + err.message);
+    }
+});
+
 // Item Details Page
 app.get("/details/:id", async function(req, res) {
     try {
@@ -51,7 +71,7 @@ app.get("/details/:id", async function(req, res) {
     }
 });
 
-// Categories Page
+// Categories Overview Page
 app.get("/categories", async function(req, res) {
     try {
         const categories = await categoryModel.getAll();
@@ -84,10 +104,9 @@ app.get("/users/:id", async function(req, res) {
 });
 
 // --- DATABASE TEST ROUTE ---
-// Use this to verify your SQL script loaded John Villa correctly
 app.get("/db_test", async function(req, res) {
     try {
-        const rows = await db.query("SELECT * FROM users");
+        const rows = await db.query("SELECT * FROM Users");
         res.json(rows);
     } catch (err) {
         res.status(500).send("Database connection failed: " + err.message);
