@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Apr 24, 2026 at 12:04 PM
--- Wersja serwera: 9.6.0
--- Wersja PHP: 8.3.26
+-- Generation Time: Apr 24, 2026 at 12:09 PM
+-- Server version: 9.6.0
+-- PHP Version: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Baza danych: `softwareeng`
+-- Database: `softwareeng`
 --
 
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `genres`
+-- Table structure for table `genres`
 --
 
 CREATE TABLE `genres` (
@@ -34,7 +34,7 @@ CREATE TABLE `genres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Zrzut danych tabeli `genres`
+-- Dumping data for table `genres`
 --
 
 INSERT INTO `genres` (`genre_id`, `type_id`, `genre_name`) VALUES
@@ -50,7 +50,7 @@ INSERT INTO `genres` (`genre_id`, `type_id`, `genre_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `media_items`
+-- Table structure for table `media_items`
 --
 
 CREATE TABLE `media_items` (
@@ -68,7 +68,7 @@ CREATE TABLE `media_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Zrzut danych tabeli `media_items`
+-- Dumping data for table `media_items`
 --
 
 INSERT INTO `media_items` (`item_id`, `owner_id`, `type_id`, `genre_id`, `title`, `description`, `item_condition`, `photo_urls`, `is_available`, `author_artist`, `isbn_album_title`) VALUES
@@ -84,7 +84,7 @@ INSERT INTO `media_items` (`item_id`, `owner_id`, `type_id`, `genre_id`, `title`
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `media_types`
+-- Table structure for table `media_types`
 --
 
 CREATE TABLE `media_types` (
@@ -93,7 +93,7 @@ CREATE TABLE `media_types` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Zrzut danych tabeli `media_types`
+-- Dumping data for table `media_types`
 --
 
 INSERT INTO `media_types` (`type_id`, `type_name`) VALUES
@@ -103,7 +103,7 @@ INSERT INTO `media_types` (`type_id`, `type_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `messages`
+-- Table structure for table `messages`
 --
 
 CREATE TABLE `messages` (
@@ -117,7 +117,7 @@ CREATE TABLE `messages` (
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `reviews`
+-- Table structure for table `reviews`
 --
 
 CREATE TABLE `reviews` (
@@ -132,7 +132,7 @@ CREATE TABLE `reviews` (
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `swap_transactions`
+-- Table structure for table `swap_transactions`
 --
 
 CREATE TABLE `swap_transactions` (
@@ -147,7 +147,7 @@ CREATE TABLE `swap_transactions` (
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -165,7 +165,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Zrzut danych tabeli `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `first_name`, `last_name`, `role`, `phone_number`, `city`, `rating_score`, `created_at`) VALUES
@@ -175,18 +175,18 @@ INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `first_nam
 (4, 'vinyl_vibe', 'mike.m@example.com', 'hash123', 'Mike', 'Jones', 'Member', '0788888888', 'Stockport', 5.00, '2026-03-27 15:25:18');
 
 --
--- Indeksy dla zrzutów tabel
+-- Indexes for dumped tables
 --
 
 --
--- Indeksy dla tabeli `genres`
+-- Indexes for table `genres`
 --
 ALTER TABLE `genres`
   ADD PRIMARY KEY (`genre_id`),
   ADD KEY `type_id` (`type_id`);
 
 --
--- Indeksy dla tabeli `media_items`
+-- Indexes for table `media_items`
 --
 ALTER TABLE `media_items`
   ADD PRIMARY KEY (`item_id`),
@@ -195,14 +195,14 @@ ALTER TABLE `media_items`
   ADD KEY `genre_id` (`genre_id`);
 
 --
--- Indeksy dla tabeli `media_types`
+-- Indexes for table `media_types`
 --
 ALTER TABLE `media_types`
   ADD PRIMARY KEY (`type_id`),
   ADD UNIQUE KEY `type_name` (`type_name`);
 
 --
--- Indeksy dla tabeli `messages`
+-- Indexes for table `messages`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`message_id`),
@@ -210,7 +210,7 @@ ALTER TABLE `messages`
   ADD KEY `receiver_id` (`receiver_id`);
 
 --
--- Indeksy dla tabeli `reviews`
+-- Indexes for table `reviews`
 --
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`review_id`),
@@ -218,7 +218,7 @@ ALTER TABLE `reviews`
   ADD KEY `reviewee_id` (`reviewee_id`);
 
 --
--- Indeksy dla tabeli `swap_transactions`
+-- Indexes for table `swap_transactions`
 --
 ALTER TABLE `swap_transactions`
   ADD PRIMARY KEY (`swap_id`),
@@ -227,7 +227,7 @@ ALTER TABLE `swap_transactions`
   ADD KEY `item_id` (`item_id`);
 
 --
--- Indeksy dla tabeli `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
@@ -235,63 +235,63 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT dla zrzuconych tabel
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT dla tabeli `genres`
+-- AUTO_INCREMENT for table `genres`
 --
 ALTER TABLE `genres`
   MODIFY `genre_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT dla tabeli `media_items`
+-- AUTO_INCREMENT for table `media_items`
 --
 ALTER TABLE `media_items`
   MODIFY `item_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT dla tabeli `media_types`
+-- AUTO_INCREMENT for table `media_types`
 --
 ALTER TABLE `media_types`
   MODIFY `type_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT dla tabeli `messages`
+-- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
   MODIFY `message_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT dla tabeli `reviews`
+-- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
   MODIFY `review_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT dla tabeli `swap_transactions`
+-- AUTO_INCREMENT for table `swap_transactions`
 --
 ALTER TABLE `swap_transactions`
   MODIFY `swap_id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT dla tabeli `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `user_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- Ograniczenia dla zrzutów tabel
+-- Constraints for dumped tables
 --
 
 --
--- Ograniczenia dla tabeli `genres`
+-- Constraints for table `genres`
 --
 ALTER TABLE `genres`
   ADD CONSTRAINT `genres_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `media_types` (`type_id`) ON DELETE CASCADE;
 
 --
--- Ograniczenia dla tabeli `media_items`
+-- Constraints for table `media_items`
 --
 ALTER TABLE `media_items`
   ADD CONSTRAINT `media_items_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
@@ -299,21 +299,21 @@ ALTER TABLE `media_items`
   ADD CONSTRAINT `media_items_ibfk_3` FOREIGN KEY (`genre_id`) REFERENCES `genres` (`genre_id`);
 
 --
--- Ograniczenia dla tabeli `messages`
+-- Constraints for table `messages`
 --
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`user_id`),
   ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`user_id`);
 
 --
--- Ograniczenia dla tabeli `reviews`
+-- Constraints for table `reviews`
 --
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`reviewer_id`) REFERENCES `users` (`user_id`),
   ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`reviewee_id`) REFERENCES `users` (`user_id`);
 
 --
--- Ograniczenia dla tabeli `swap_transactions`
+-- Constraints for table `swap_transactions`
 --
 ALTER TABLE `swap_transactions`
   ADD CONSTRAINT `swap_transactions_ibfk_1` FOREIGN KEY (`requester_id`) REFERENCES `users` (`user_id`),
