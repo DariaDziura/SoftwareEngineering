@@ -1,10 +1,60 @@
 extends layout
 
 block content
-  h1 All Listings
+  .container
+    h1 Community Listings
+    p.subtitle Browse books and records available for swap in your area.
 
-  ul
-    each item in (listings || [])
-      li
-        a(href=`/details/${item.id}`)= item.title
-        | - #{item.category}
+    hr
+
+    if listings.length > 0
+      .grid-container
+        each item in listings
+          .item-card
+            h3
+              //- Use an absolute path to avoid "Cannot GET" errors
+              a(href=`/details/${item.id}`) #{item.title}
+            
+            .item-details
+              p 
+                strong Type: 
+                span.badge #{item.media_type}
+              p 
+                strong Category: 
+                | #{item.category}
+              p 
+                strong Condition: 
+                | #{item.item_condition}
+            
+            .item-actions
+              a.btn-secondary(href=`/details/${item.id}`) View Details
+    else
+      .alert-info
+        p No items have been listed yet. Be the first to add one!
+
+  //- Optional: Add some basic internal CSS if you don't have a stylesheet yet
+  style.
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .item-card {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    .badge {
+      background: #e0e0e0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+    .btn-secondary {
+      display: inline-block;
+      margin-top: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }

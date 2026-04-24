@@ -1,3 +1,16 @@
-.git
-node_modules
+# Ignore the local database folder and socket files
+db/
+mysql.sock
+*.sock
+
+# Ignore node modules (they should be installed inside the container)
+node_modules/
 npm-debug.log
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore git history
+.git
+.gitignore

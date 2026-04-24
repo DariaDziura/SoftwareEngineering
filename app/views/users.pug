@@ -1,9 +1,14 @@
 extends layout
 
 block content
-  h1 Users
+  h1 Community Members
+  p Meet the people swapping books and records near you.
 
-  ul
+  .grid-container
     each user in users
-      li
-        a(href=`/users/${user.id}`)= user.username
+      .item-card
+        h3 #{user.username}
+        p 
+          strong Location: 
+          | #{user.city}
+        a.btn(href=`/users/${user.id}`) View Profile

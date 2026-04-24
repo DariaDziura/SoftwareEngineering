@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  .hero-section(style="text-align: center; padding: 60px 20px; background: #f4f4f4; border-radius: 12px; margin-top: 20px;")
+    h1 Welcome to MediaSwap
+    p.subtitle(style="font-size: 1.2em; color: #666; max-width: 600px; margin: 20px auto;") 
+      | The community-driven marketplace for local book lovers and record collectors. 
+      | Swap your finished reads and listened-to vinyls with neighbors.
+
+    .home-actions(style="margin-top: 30px;")
+      a.btn(href="/listings" style="margin-right: 15px; padding: 12px 25px;") 📚 Browse All Items
+      a.btn(href="/users" style="background: #28a745; padding: 12px 25px;") 🤝 Meet the Community
+
+  .features-grid(style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 50px;")
+    .feature-card(style="padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;")
+      h2 For Readers
+      p Find rare philosophy books, sci-fi classics, and more. Connect with members to expand your library.
+    
+    .feature-card(style="padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;")
+      h2 For Collectors
+      p Trade your vintage vinyl records. Whether it's Jazz or Classic Rock, find your next favorite spin from collectors.

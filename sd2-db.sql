@@ -9,7 +9,10 @@
 CREATE DATABASE IF NOT EXISTS softwareeng;
 USE softwareeng;
 
--- --------------------------------------------------------
+-- Clear existing data to allow clean re-seeding
+DROP TABLE IF EXISTS reviews, messages, swap_transactions, media_items, users, genres, media_types;
+SET FOREIGN_KEY_CHECKS = 1;
+
 -- 1. MEDIA TYPES
 -- --------------------------------------------------------
 -- Focuses specifically on 'Book' and 'Record' per project theme.
@@ -18,7 +21,6 @@ CREATE TABLE IF NOT EXISTS media_types (
     type_name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- --------------------------------------------------------
 -- 2. GENRES
 -- --------------------------------------------------------
 -- Linked to types for organized browsing (e.g., Philosophy for Books).
@@ -29,7 +31,6 @@ CREATE TABLE IF NOT EXISTS genres (
     FOREIGN KEY (type_id) REFERENCES media_types(type_id) ON DELETE CASCADE
 );
 
--- --------------------------------------------------------
 -- 3. USERS
 -- --------------------------------------------------------
 -- Privacy-first design: minimal data collection (city only).
@@ -48,7 +49,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- --------------------------------------------------------
 -- 4. MEDIA ITEMS
 -- --------------------------------------------------------
 -- Detailed condition list addresses Reggie's quality concerns.
@@ -69,7 +69,6 @@ CREATE TABLE IF NOT EXISTS media_items (
     FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
 );
 
--- --------------------------------------------------------
 -- 5. SWAP TRANSACTIONS
 -- --------------------------------------------------------
 -- Manages the non-monetary "gift economy" exchange workflow.
@@ -85,7 +84,6 @@ CREATE TABLE IF NOT EXISTS swap_transactions (
     FOREIGN KEY (item_id) REFERENCES media_items(item_id)
 );
 
--- --------------------------------------------------------
 -- 6. MESSAGES
 -- --------------------------------------------------------
 -- Advanced Feature (Sprint 4): Coordination for safe meetups.
@@ -99,7 +97,6 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (receiver_id) REFERENCES users(user_id)
 );
 
--- --------------------------------------------------------
 -- 7. REVIEWS
 -- --------------------------------------------------------
 -- Peer trust mechanism for community accountability.
