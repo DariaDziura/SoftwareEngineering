@@ -31,5 +31,11 @@ class User {
         `);
         return rows;
     }
+
+    async getByUsername(username) {
+        const sql = "SELECT * FROM Users WHERE username = ?";
+        const rows = await this.db.query(sql, [username]);
+        return rows[0];
+    }
 }
 module.exports = User;
