@@ -1,9 +1,10 @@
 extends layout
 
 block content
+  
+
   .container
     h1= item.title
-    
     .item-card
       //- Basic Information
       p 
@@ -51,4 +52,8 @@ block content
           a(href=`/users/${item.user_id}`) #{item.username}
     
     .actions
-      a.btn(href="/listings") ← Back to All Listings
+
+  form(action=`/swaps/request/${item.id}` method="POST")
+    button(type="submit") Request Swap
+
+  a.btn(href="/listings") ← Back to All Listings
