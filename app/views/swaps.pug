@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .container
+    h1 Swap History
+
+    if swaps.length === 0
+      p No swaps yet.
+
+    each swap in swaps
+      .swap-card
+        p
+          strong Item:
+          | #{swap.item_title}
+
+        p
+          strong Status:
+          | #{swap.status}
+
+        .actions
+          if swap.status === 'pending'
+            form(action=`/swaps/accept/${swap.id}` method="POST")
+              button Accept
+
+            form(action=`/swaps/decline/${swap.id}` method="POST")
+              button Decline
