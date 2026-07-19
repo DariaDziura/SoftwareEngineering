@@ -25,6 +25,7 @@ class Item {
             LEFT JOIN media_types mt ON mi.type_id = mt.type_id
             WHERE mi.item_id = ?
         `, [id]);
+
         return rows[0];
     }
 
@@ -43,12 +44,12 @@ class Item {
             LEFT JOIN genres g ON mi.genre_id = g.genre_id
             LEFT JOIN media_types mt ON mi.type_id = mt.type_id
         `);
+
         return rows;
     }
 
     /**
-     * NEW METHOD: Get items filtered by a specific category ID
-     * This fixes the issue where all items were shown instead of one category
+     * Get items filtered by a specific category ID
      */
     async getByCategory(categoryId) {
         const rows = await this.db.query(`
@@ -63,6 +64,7 @@ class Item {
             LEFT JOIN media_types mt ON mi.type_id = mt.type_id
             WHERE mi.genre_id = ?
         `, [categoryId]);
+
         return rows;
     }
 
@@ -78,6 +80,37 @@ class Item {
             FROM media_items 
             WHERE owner_id = ?
         `, [userId]);
+    }
+
+    /**
+     * Create a new media listing
+     */
+    async create(item) {
+        const result = await this.db.query(`
+            INSERT INTO media_items
+            (
+                owner_id,
+                type_id,
+                genre_id,
+                title,
+                description,
+                item_condition,
+                author_artist,
+                isbn_album_title
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            item.owner_id,
+            item.type_id,
+            item.genre_id,
+            item.title,
+            item.description,
+            item.item_condition,
+            item.author_artist,
+            item.isbn_album_title
+        ]);
+
+        return result.insertId;
     }
 }
 

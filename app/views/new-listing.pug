@@ -1,0 +1,113 @@
+extends layout
+
+block content
+    main
+        h1 Add New Listing
+        p Share a book or record with the MediaSwap community.
+
+        if error
+            p.form-error= error
+
+        form(action="/listings/new" method="POST")
+            div.form-group
+                label(for="title") Title *
+                input(
+                    type="text"
+                    id="title"
+                    name="title"
+                    required
+                    maxlength="255"
+                    value=formData.title || ""
+                )
+
+            div.form-group
+                label(for="description") Description
+                textarea(
+                    id="description"
+                    name="description"
+                    rows="5"
+                )= formData.description || ""
+
+            div.form-group
+                label(for="item_condition") Condition *
+                select(
+                    id="item_condition"
+                    name="item_condition"
+                    required
+                )
+                    option(value="") Select condition
+                    option(
+                        value="New"
+                        selected=formData.item_condition === "New"
+                    ) New
+                    option(
+                        value="Like New"
+                        selected=formData.item_condition === "Like New"
+                    ) Like New
+                    option(
+                        value="Very Good"
+                        selected=formData.item_condition === "Very Good"
+                    ) Very Good
+                    option(
+                        value="Good"
+                        selected=formData.item_condition === "Good"
+                    ) Good
+                    option(
+                        value="Fair"
+                        selected=formData.item_condition === "Fair"
+                    ) Fair
+                    option(
+                        value="Poor"
+                        selected=formData.item_condition === "Poor"
+                    ) Poor
+
+            div.form-group
+                label(for="type_id") Media Type *
+                select(
+                    id="type_id"
+                    name="type_id"
+                    required
+                )
+                    option(value="") Select media type
+                    each mediaType in mediaTypes
+                        option(
+                            value=mediaType.type_id
+                            selected=String(formData.type_id) === String(mediaType.type_id)
+                        )= mediaType.type_name
+
+            div.form-group
+                label(for="genre_id") Genre *
+                select(
+                    id="genre_id"
+                    name="genre_id"
+                    required
+                )
+                    option(value="") Select genre
+                    each genre in genres
+                        option(
+                            value=genre.genre_id
+                            selected=String(formData.genre_id) === String(genre.genre_id)
+                        )= genre.genre_name
+
+            div.form-group
+                label(for="author_artist") Author or Artist
+                input(
+                    type="text"
+                    id="author_artist"
+                    name="author_artist"
+                    maxlength="255"
+                    value=formData.author_artist || ""
+                )
+
+            div.form-group
+                label(for="isbn_album_title") ISBN or Album Information
+                input(
+                    type="text"
+                    id="isbn_album_title"
+                    name="isbn_album_title"
+                    maxlength="255"
+                    value=formData.isbn_album_title || ""
+                )
+
+            button(type="submit") Create Listing
+            a(href="/listings") Cancel
