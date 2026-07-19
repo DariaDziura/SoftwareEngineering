@@ -108,6 +108,90 @@ app.get("/category/:id", async function(req, res) {
     }
 });
 
+// Add New Listing Page
+app.get("/listings/new", async function(req, res) {
+    try {
+        const genres = await db.query(`
+            SELECT genre_id, genre_name, type_id
+            FROM genres
+            ORDER BY genre_name
+        `);
+
+        const mediaTypes = await db.query(`
+            SELECT type_id, type_name
+            FROM media_types
+            ORDER BY type_name
+        `);
+
+        res.render("new-listing", {
+            title: "Add New Listing",
+            genres,
+            mediaTypes,
+            error: null,
+            formData: {}
+        });
+    } catch (err) {
+        res.status(500).send("Error loading form: " + err.message);
+    }
+});
+
+// Save New Listing
+app.post("/listings/new", async function(req, res) {
+    try {
+        const {
+            title,
+            description,
+            item_condition,
+            author_artist,
+            isbn_album_title,
+            type_id,
+            genre_id
+        } = req.body;
+
+        if (!title || !item_condition || !type_id || !genre_id) {
+            const genres = await db.query(`
+                SELECT genre_id, genre_name, type_id
+                FROM genres
+                ORDER BY genre_name
+            `);
+
+            const mediaTypes = await db.query(`
+                SELECT type_id, type_name
+                FROM media_types
+                ORDER BY type_name
+            `);
+
+            return res.status(400).render("new-listing", {
+                title: "Add New Listing",
+                genres,
+                mediaTypes,
+                error: "Please complete all required fields.",
+                formData: req.body
+            });
+        }
+
+        // Temporary owner until login/session integration is completed
+        const owner_id = 1;
+
+        const newItemId = await itemModel.create({
+            owner_id,
+            type_id,
+            genre_id,
+            title: title.trim(),
+            description: description ? description.trim() : null,
+            item_condition,
+            author_artist: author_artist ? author_artist.trim() : null,
+            isbn_album_title: isbn_album_title
+                ? isbn_album_title.trim()
+                : null
+        });
+
+        res.redirect(`/details/${newItemId}`);
+    } catch (err) {
+        res.status(500).send("Error creating listing: " + err.message);
+    }
+});
+
 // Item Details Page
 app.get("/details/:id", async function(req, res) {
     try {
