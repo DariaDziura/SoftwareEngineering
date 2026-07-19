@@ -192,6 +192,151 @@ app.post("/listings/new", async function(req, res) {
     }
 });
 
+// Edit Listing Page
+app.get("/listings/:id/edit", async function(req, res) {
+    try {
+        // Temporary user until login/session integration is completed
+        const currentUserId = 1;
+
+        const item = await itemModel.getByIdAndOwner(
+            req.params.id,
+            currentUserId
+        );
+
+        if (!item) {
+            return res.status(403).send(
+                "Listing not found or you do not have permission to edit it."
+            );
+        }
+
+        const genres = await db.query(`
+            SELECT genre_id, genre_name, type_id
+            FROM genres
+            ORDER BY genre_name
+        `);
+
+        const mediaTypes = await db.query(`
+            SELECT type_id, type_name
+            FROM media_types
+            ORDER BY type_name
+        `);
+
+        res.render("edit-listing", {
+            title: "Edit Listing",
+            item,
+            genres,
+            mediaTypes,
+            error: null
+        });
+    } catch (err) {
+        res.status(500).send(
+            "Error loading listing: " + err.message
+        );
+    }
+});
+
+// Update Listing
+app.post("/listings/:id/edit", async function(req, res) {
+    try {
+        // Temporary user until login/session integration is completed
+        const currentUserId = 1;
+
+        const {
+            title,
+            description,
+            item_condition,
+            author_artist,
+            isbn_album_title,
+            type_id,
+            genre_id
+        } = req.body;
+
+        if (!title || !item_condition || !type_id || !genre_id) {
+            const genres = await db.query(`
+                SELECT genre_id, genre_name, type_id
+                FROM genres
+                ORDER BY genre_name
+            `);
+
+            const mediaTypes = await db.query(`
+                SELECT type_id, type_name
+                FROM media_types
+                ORDER BY type_name
+            `);
+
+            return res.status(400).render("edit-listing", {
+                title: "Edit Listing",
+                item: {
+                    id: req.params.id,
+                    ...req.body
+                },
+                genres,
+                mediaTypes,
+                error: "Please complete all required fields."
+            });
+        }
+
+        const affectedRows = await itemModel.update(
+            req.params.id,
+            currentUserId,
+            {
+                type_id,
+                genre_id,
+                title: title.trim(),
+                description: description
+                    ? description.trim()
+                    : null,
+                item_condition,
+                author_artist: author_artist
+                    ? author_artist.trim()
+                    : null,
+                isbn_album_title: isbn_album_title
+                    ? isbn_album_title.trim()
+                    : null
+            }
+        );
+
+        if (affectedRows === 0) {
+            return res.status(403).send(
+                "Listing not found or you do not have permission to edit it."
+            );
+        }
+
+        res.redirect(`/details/${req.params.id}`);
+    } catch (err) {
+        res.status(500).send(
+            "Error updating listing: " + err.message
+        );
+    }
+});
+
+// Delete Listing
+app.post("/listings/:id/delete", async function(req, res) {
+    try {
+        // Temporary user until login/session integration is completed
+        const currentUserId = 1;
+
+        const affectedRows = await itemModel.delete(
+            req.params.id,
+            currentUserId
+        );
+
+        if (affectedRows === 0) {
+            return res.status(403).send(
+                "Listing not found or you do not have permission to delete it."
+            );
+        }
+
+        res.redirect("/listings");
+    } catch (err) {
+        console.error(err);
+
+        res.status(500).send(
+            "Error deleting listing: " + err.message
+        );
+    }
+});
+
 // Item Details Page
 app.get("/details/:id", async function(req, res) {
     try {

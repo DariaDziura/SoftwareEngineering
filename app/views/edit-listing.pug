@@ -1,0 +1,115 @@
+extends layout
+
+block content
+  .container
+    h1 Edit Listing
+
+    if error
+      p.form-error= error
+
+    form(action=`/listings/${item.id}/edit` method="POST")
+      .form-group
+        label(for="title") Title *
+        input(
+          type="text"
+          id="title"
+          name="title"
+          required
+          maxlength="255"
+          value=item.title || ""
+        )
+
+      .form-group
+        label(for="description") Description
+        textarea(
+          id="description"
+          name="description"
+          rows="5"
+        )= item.description || ""
+
+      .form-group
+        label(for="item_condition") Condition *
+        select(
+          id="item_condition"
+          name="item_condition"
+          required
+        )
+          option(value="") Select condition
+          option(
+            value="New"
+            selected=item.item_condition === "New"
+          ) New
+          option(
+            value="Like New"
+            selected=item.item_condition === "Like New"
+          ) Like New
+          option(
+            value="Very Good"
+            selected=item.item_condition === "Very Good"
+          ) Very Good
+          option(
+            value="Good"
+            selected=item.item_condition === "Good"
+          ) Good
+          option(
+            value="Fair"
+            selected=item.item_condition === "Fair"
+          ) Fair
+          option(
+            value="Poor"
+            selected=item.item_condition === "Poor"
+          ) Poor
+
+      .form-group
+        label(for="type_id") Media Type *
+        select(
+          id="type_id"
+          name="type_id"
+          required
+        )
+          option(value="") Select media type
+
+          each mediaType in mediaTypes
+            option(
+              value=mediaType.type_id
+              selected=String(item.type_id) === String(mediaType.type_id)
+            )= mediaType.type_name
+
+      .form-group
+        label(for="genre_id") Genre *
+        select(
+          id="genre_id"
+          name="genre_id"
+          required
+        )
+          option(value="") Select genre
+
+          each genre in genres
+            option(
+              value=genre.genre_id
+              selected=String(item.genre_id) === String(genre.genre_id)
+            )= genre.genre_name
+
+      .form-group
+        label(for="author_artist") Author or Artist
+        input(
+          type="text"
+          id="author_artist"
+          name="author_artist"
+          maxlength="255"
+          value=item.author_artist || ""
+        )
+
+      .form-group
+        label(for="isbn_album_title") ISBN or Album Information
+        input(
+          type="text"
+          id="isbn_album_title"
+          name="isbn_album_title"
+          maxlength="255"
+          value=item.isbn_album_title || ""
+        )
+
+      .actions
+        button.btn(type="submit") Save Changes
+        a.btn(href=`/details/${item.id}`) Cancel
