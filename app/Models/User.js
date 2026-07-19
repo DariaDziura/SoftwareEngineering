@@ -37,5 +37,14 @@ class User {
         const rows = await this.db.query(sql, [username]);
         return rows[0];
     }
+
+    // finding user by username
+    static async findByUsername(username) {
+        const sql = 'SELECT id, username, password, role From users WHERE username = ? LIMIT 1';
+
+        const [rows] = await db.querry(sql, [username]);
+
+        return rows[0] || null;
+    }
 }
 module.exports = User;

@@ -172,7 +172,8 @@ INSERT INTO `users` (`user_id`, `username`, `email`, `password_hash`, `first_nam
 (1, 'jvilla', 'john.v@example.com', 'hash123', 'John', 'Villa', 'Member', '1234567890', 'Oldham', 5.00, '2026-03-27 15:25:18'),
 (2, 'rdiesel', 'reggie.d@example.com', 'hash123', 'Reggie', 'Diesel', 'Member', '0987654321', 'Manchester', 5.00, '2026-03-27 15:25:18'),
 (3, 'sarah_reads', 'sarah.s@example.com', 'hash123', 'Sarah', 'Smith', 'Member', '0771234567', 'Salford', 5.00, '2026-03-27 15:25:18'),
-(4, 'vinyl_vibe', 'mike.m@example.com', 'hash123', 'Mike', 'Jones', 'Member', '0788888888', 'Stockport', 5.00, '2026-03-27 15:25:18');
+(4, 'vinyl_vibe', 'mike.m@example.com', 'hash123', 'Mike', 'Jones', 'Member', '0788888888', 'Stockport', 5.00, '2026-03-27 15:25:18'),
+(5, 'admin1', 'admin@admin.com', 'admin123', 'Sarah', 'Green', 'Admin', '07635356782', 'London', 5.00, '2026-03-27 15:25:18');
 
 --
 -- Indexes for dumped tables

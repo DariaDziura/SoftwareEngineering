@@ -23,6 +23,9 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static("static"));
 app.use(express.urlencoded({ extended: true }));
 
+// Ensuring Express can read form values
+app.use(express.urlencoded({extended: true}));
+
 // --- ROUTES ---
 
 // Home Page
@@ -52,9 +55,13 @@ app.post("/login", async function(req, res) {
 
         if (user.role === "Admin") {
             return res.redirect("/admin");
-        } else {
-            return res.redirect(`/users/${user.user_id}`);
         }
+
+        if (user.role === "Member") {
+            return res.redirect("/member");
+        }
+
+        return res.send("Unknown user role");
 
     } catch (err) {
         res.status(500).send("Login error: " + err.message);
@@ -63,11 +70,11 @@ app.post("/login", async function(req, res) {
 
 // admin route
 app.get("/admin", function(req, res) {
-    res.send("Admin dashboard");
+    res.send("adashboard");
 });
 
 app.get("/member", function(req, res) {
-    res.send("Member dashboard");
+    res.send("mdashboard");
 });
 
 // All Listings Page
