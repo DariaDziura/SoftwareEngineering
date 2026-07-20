@@ -50,7 +50,8 @@ block content
         p 
           strong Listed by: 
           a(href=`/users/${item.user_id}`) #{item.username}
-    
+    form(action=`/swaps/request/${item.id}` method="POST")
+  button.btn(type="submit") Request Swap
     .actions
 
   form(action=`/swaps/request/${item.id}` method="POST")
