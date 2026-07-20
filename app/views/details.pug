@@ -1,6 +1,8 @@
 extends layout
 
 block content
+  
+
   .container
     h1= item.title
 
@@ -46,6 +48,16 @@ block content
       hr
 
       .owner-info
+        p 
+          strong Listed by: 
+          a(href=`/users/${item.user_id}`) #{item.username}
+    form(action=`/swaps/request/${item.id}` method="POST")
+  button.btn(type="submit") Request Swap
+    .actions
+
+  
+
+  a.btn(href="/listings") ← Back to All Listings
         p
           strong Listed by:
           |  
