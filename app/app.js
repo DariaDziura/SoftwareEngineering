@@ -37,6 +37,19 @@ app.get("/listings", async function(req, res) {
     } catch (err) {
         res.status(500).send("Error fetching listings: " + err.message);
     }
+});// Swap History Page
+app.get("/swaps", async function(req, res) {
+    try {
+        const swaps = [];
+
+        res.render("swaps", {
+            title: "Swap History",
+            swaps
+        });
+
+    } catch (err) {
+        res.status(500).send("Error loading swaps: " + err.message);
+    }
 });
 
 // Filtered Category Page - FIX: This route handles the category filtering
