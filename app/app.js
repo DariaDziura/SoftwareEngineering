@@ -206,7 +206,7 @@ app.post("/listings/new", async function(req, res) {
         }
 
         // Temporary owner until login/session integration is completed
-        const owner_id = 1;
+        const owner_id = req.session.user.id;
 
         const newItemId = await itemModel.create({
             owner_id,
