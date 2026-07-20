@@ -18,6 +18,11 @@ html
         a(href="/listings") All Items
         a(href="/categories") Categories
         a(href="/users") Community
-        a(href="/login") Login
+        if !user
+          a(href="/login") Login
+
+        if user
+          a(href="/logout") Logout
+
     .container
       block content
