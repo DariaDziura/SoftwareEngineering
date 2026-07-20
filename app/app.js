@@ -10,10 +10,14 @@ const User = require("./Models/User");
 const Item = require("./Models/Item");
 const Category = require("./Models/Category");
 
+// 3. Require session
+const session = require("express-session");
+
 // Initialize Model Instances
 const userModel = new User(db);
 const itemModel = new Item(db);
 const categoryModel = new Category(db);
+
 
 // 3. Setup View Engine (Pug)
 app.set("view engine", "pug");
@@ -24,13 +28,29 @@ app.use(express.static("static"));
 app.use(express.urlencoded({ extended: true }));
 
 // Ensuring Express can read form values
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+    secret: "vinyl-swap-secret",
+    resave: false,
+    saveUninitialised: false
+}));
+
+// Make logged-in user available in every Pug file
+app.use(function(req, res, next) {
+    res.locals.user = req.session.user;
+    next();
+});
+
+
 
 // --- ROUTES ---
 
 // Home Page
 app.get("/", function(req, res) {
-    res.render("index", { title: "Home" });
+    res.render("index", {
+        title: "Home",
+     });
 });
 
 //login Page
@@ -53,28 +73,43 @@ app.post("/login", async function(req, res) {
             return res.send("Incorrect password");
         }
 
-        if (user.role === "Admin") {
-            return res.redirect("/admin");
-        }
+        // Save user in session
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            role: user.role
+        };
 
-        if (user.role === "Member") {
-            return res.redirect("/member");
-        }
-
-        return res.send("Unknown user role");
+        // Everyone goes to the same dashboard
+        return res.redirect("/dashboard");
 
     } catch (err) {
         res.status(500).send("Login error: " + err.message);
     }
 });
 
-// admin route
-app.get("/admin", function(req, res) {
-    res.send("adashboard");
+// login route
+app.get("/dashboard", function(req, res) {
+
+    if (!req.session.user) {
+        return res.redirect("/login");
+    }
+
+    res.render("index", {
+        user: req.session.user
+    });
+
 });
 
-app.get("/member", function(req, res) {
-    res.send("mdashboard");
+// logout route
+app.get("/logout", function(req, res) {
+    req.session.destroy(function(err) {
+        if (err) {
+            return res.redirect("/");
+        }
+
+        res.redirect("/");
+    });
 });
 
 // All Listings Page

@@ -5,6 +5,9 @@ block content
     h1 Community Listings
     p.subtitle Browse books and records available for swap in your area.
 
+    if user && user.role === "Member"
+      a.btn-primary(href="/listings/new") Add New Listing
+
     hr
 
     if listings.length > 0
