@@ -11,6 +11,7 @@ html
       .item-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #f9f9f9; }
       .badge { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
       .btn { display: inline-block; background: #007bff; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; }
+
   body
     nav
       .container
@@ -18,12 +19,12 @@ html
         a(href="/listings") All Items
         a(href="/categories") Categories
         a(href="/users") Community
-        if !user
-          a(href="/login") Login
 
         if user
+          a(href="/swaps") Swaps
           a(href="/logout") Logout
+        else
+          a(href="/login") Login
 
     .container
       block content
-      a(href="/swaps") Swaps

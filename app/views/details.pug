@@ -1,8 +1,6 @@
 extends layout
 
 block content
-  
-
   .container
     h1= item.title
 
@@ -34,7 +32,7 @@ block content
 
       p
         strong Condition:
-        |  #{item.item_condition}
+        |  #{item.item_condition || "Not provided"}
 
       hr
 
@@ -48,30 +46,24 @@ block content
       hr
 
       .owner-info
-        p 
-          strong Listed by: 
-          a(href=`/users/${item.user_id}`) #{item.username}
-    form(action=`/swaps/request/${item.id}` method="POST")
-  button.btn(type="submit") Request Swap
-    .actions
-
-  
-
-  a.btn(href="/listings") ← Back to All Listings
         p
           strong Listed by:
           |  
           a(href=`/users/${item.user_id}`)= item.username
 
-    .actions
-      if Number(item.user_id) === 1
-        a.btn(href=`/listings/${item.id}/edit`) Edit Listing
+      .actions
+        if user && Number(item.user_id) !== Number(user.id)
+          form(action=`/swaps/request/${item.id}` method="POST")
+            button.btn(type="submit") Request Swap
 
-        form(
-          action=`/listings/${item.id}/delete`
-          method="POST"
-          onsubmit="return confirm('Are you sure you want to delete this listing?');"
-        )
-          button.btn(type="submit") Delete Listing
+        if user && Number(item.user_id) === Number(user.id)
+          a.btn(href=`/listings/${item.id}/edit`) Edit Listing
 
-      a.btn(href="/listings") ← Back to All Listings
+          form(
+            action=`/listings/${item.id}/delete`
+            method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this listing?');"
+          )
+            button.btn(type="submit") Delete Listing
+
+        a.btn(href="/listings") ← Back to All Listings
