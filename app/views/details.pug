@@ -5,47 +5,48 @@ block content
 
   .container
     h1= item.title
+
     .item-card
-      //- Basic Information
-      p 
-        strong Author/Artist: 
-        | #{item.author_artist}
-      
-      p 
-        strong Media Type: 
-        | #{item.media_type}
+      p
+        strong Author/Artist:
+        |  #{item.author_artist || "Not provided"}
 
-      //- Conditional Logic to show the right label for the shared column
-      if item.media_type === 'Book'
-        p 
-          strong ISBN: 
-          | #{item.isbn_album_title}
-      else if item.media_type === 'Record'
-        p 
-          strong Edition: 
-          | #{item.isbn_album_title}
+      p
+        strong Media Type:
+        |  #{item.media_type || "Not provided"}
+
+      if item.media_type === "Book"
+        p
+          strong ISBN:
+          |  #{item.isbn_album_title || "Not provided"}
+      else if item.media_type === "Record"
+        p
+          strong Edition:
+          |  #{item.isbn_album_title || "Not provided"}
       else
-        p 
-          strong Identifier: 
-          | #{item.isbn_album_title}
+        p
+          strong Identifier:
+          |  #{item.isbn_album_title || "Not provided"}
 
-      p 
-        strong Category: 
-        | #{item.category}
-      
-      p 
-        strong Condition: 
-        | #{item.item_condition}
+      p
+        strong Category:
+        |  #{item.category || "Not provided"}
+
+      p
+        strong Condition:
+        |  #{item.item_condition}
 
       hr
 
-      //- Detailed Description
       h3 Description
-      p= item.description
+
+      if item.description
+        p= item.description
+      else
+        p No description provided.
 
       hr
 
-      //- Owner Information
       .owner-info
         p 
           strong Listed by: 
@@ -57,3 +58,20 @@ block content
   
 
   a.btn(href="/listings") ← Back to All Listings
+        p
+          strong Listed by:
+          |  
+          a(href=`/users/${item.user_id}`)= item.username
+
+    .actions
+      if Number(item.user_id) === 1
+        a.btn(href=`/listings/${item.id}/edit`) Edit Listing
+
+        form(
+          action=`/listings/${item.id}/delete`
+          method="POST"
+          onsubmit="return confirm('Are you sure you want to delete this listing?');"
+        )
+          button.btn(type="submit") Delete Listing
+
+      a.btn(href="/listings") ← Back to All Listings

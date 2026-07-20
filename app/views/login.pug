@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .features-grid(style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 50px;")
+    .feature-card(style="padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;")
+      h2 Login
+      form(method="POST", action="/login")
+        div
+          label(for="username") Username 
+          input(type="text", name="username", id="username")
+        
+        div
+          label(for="password") Password 
+          input(type="password", name="password", id="password")
+
+        div
+          button(type="submit") Login 
+
+    .feature-card(style="padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white;")
+      h2 Create an account
+      p Coming soon!
+  style.
+    label {
+        padding-right: 10px;
+    }
+  
